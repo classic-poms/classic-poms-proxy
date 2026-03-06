@@ -1,0 +1,12 @@
+{
+  "name": "classic-poms-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server para o Classic AI do Classic Poms Kennel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
