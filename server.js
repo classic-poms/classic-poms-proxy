@@ -44,7 +44,7 @@ const server = http.createServer(function(req, res) {
 
     if (payload.system) {
       contents.push({ role: 'user', parts: [{ text: 'INSTRUCOES DO SISTEMA:\n' + payload.system }] });
-      contents.push({ role: 'model', parts: [{ text: 'Entendido! Pronto para ajudar.' }] });
+      contents.push({ role: 'model', parts: [{ text: 'Entendido! Pronto para ajudar como assistente do Classic Poms Kennel.' }] });
     }
 
     if (payload.messages) {
@@ -65,18 +65,11 @@ const server = http.createServer(function(req, res) {
       });
     }
 
-    var tools;
-    if (payload.tools && payload.tools.length > 0) {
-      tools = [{ functionDeclarations: payload.tools.map(function(t) {
-        return { name: t.name, description: t.description, parameters: t.input_schema };
-      })}];
-    }
-
+    // Gemini v1 nao suporta tools no mesmo formato - envia sem tools
     var geminiPayload = {
       contents: contents,
       generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
     };
-    if (tools) geminiPayload.tools = tools;
 
     var postData = JSON.stringify(geminiPayload);
     var model = 'gemini-1.5-flash';
@@ -112,26 +105,17 @@ const server = http.createServer(function(req, res) {
             return;
           }
 
-          var content = [];
           var parts = (candidate.content && candidate.content.parts) || [];
-          parts.forEach(function(part) {
-            if (part.text) content.push({ type: 'text', text: part.text });
-            if (part.functionCall) content.push({
-              type: 'tool_use',
-              id: 'tool_' + Date.now(),
-              name: part.functionCall.name,
-              input: part.functionCall.args || {}
-            });
-          });
+          var text = parts.map(function(p) { return p.text || ''; }).join('');
 
-          if (!content.length) {
-            content.push({ type: 'text', text: 'Desculpe, nao consegui processar. Tente novamente.' });
+          if (!text) {
+            text = 'Desculpe, nao consegui processar. Tente novamente.';
           }
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
-            content: content,
-            stop_reason: parts.some(function(p) { return p.functionCall; }) ? 'tool_use' : 'end_turn',
+            content: [{ type: 'text', text: text }],
+            stop_reason: 'end_turn',
             model: model
           }));
         } catch (e) {
