@@ -153,4 +153,4 @@ const server = http.createServer((req, res) => {
     });
 });
 
-server.listen(PORT, () => console.log(`Classic Proxy (Gemini) rodando na porta ${PORT}`));V
+server.listen(PORT, () => console.log(`Classic Proxy (Gemini) rodando na porta ${PORT}`));
