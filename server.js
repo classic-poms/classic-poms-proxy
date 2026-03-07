@@ -80,7 +80,7 @@ const server = http.createServer(function(req, res) {
 
     var postData = JSON.stringify(geminiPayload);
     var model = 'gemini-1.5-flash';
-    var apiPath = '/v1beta/models/' + model + ':generateContent?key=' + GEMINI_API_KEY;
+    var apiPath = '/v1/models/' + model + ':generateContent?key=' + GEMINI_API_KEY;
 
     var options = {
       hostname: 'generativelanguage.googleapis.com',
