@@ -72,7 +72,7 @@ const server = http.createServer(function(req, res) {
     };
 
     var postData = JSON.stringify(geminiPayload);
-    var model = 'gemini-1.5-flash';
+    var model = 'gemini-pro';
     var apiPath = '/v1/models/' + model + ':generateContent?key=' + GEMINI_API_KEY;
 
     var options = {
